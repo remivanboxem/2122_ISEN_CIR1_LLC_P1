@@ -1,0 +1,884 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  10pt,
+  french,
+  ignorenonframetext,
+  aspectratio=169,
+]{beamer}
+\title{Le Langage C}
+\subtitle{Révision Partiel Semestre 1}
+\author{Rémi VAN BOXEM}
+\date{5 janvier 2022}
+\institute{Junia ISEN}
+\titlegraphic{\includegraphics{img/Chapeaubleubleu.png}}
+
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usetheme[]{CambridgeUS}
+\usecolortheme{Dracula}
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Le Langage C},
+  pdfauthor={Rémi VAN BOXEM},
+  pdflang={fr-FR},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+\usepackage{caption}
+% Make caption package work with longtable
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifXeTeX
+  % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[]{french}
+\else
+  \usepackage[main=french]{babel}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\fi
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}[fragile]{Types du langage C}
+\protect\hypertarget{types-du-langage-c}{}
+En C, il y a trois grandes familles de type :
+
+\begin{itemize}
+\tightlist
+\item
+  Les nombres entiers \texttt{int}
+\item
+  Les nombres à virgules (nombres flottant) \texttt{float}
+\item
+  Les caractères \texttt{char}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Codes de conversion}
+\protect\hypertarget{codes-de-conversion}{}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Lettre & Signification \\
+\midrule
+\endhead
+\texttt{c} & \texttt{char} \\
+\texttt{d} & \texttt{int} \\
+\texttt{u} & \texttt{unsigned\ int} \\
+\texttt{ld} & \texttt{long} \\
+\texttt{lu} & \texttt{unsigned\ long} \\
+\texttt{f} & \texttt{float} ou \texttt{double} \\
+\texttt{s} & char par adresse (string) \\
+\bottomrule
+\end{longtable}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\includegraphics{img/type-conversion.png}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Directives préprocesseurs}
+\protect\hypertarget{directives-pruxe9processeurs}{}
+\begin{block}{\texttt{\#Include}}
+\protect\hypertarget{include}{}
+Les \texttt{\#include} permettent d'informer le compilateur d'ajouter
+des bibliothèques de fonctionnalités. Quelques exemples :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdlib.h\textgreater{}}\PreprocessorTok{ }\CommentTok{// Librairie standard}
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}\PreprocessorTok{  }\CommentTok{// Librairie d\textquotesingle{}entrée sortie (printf / scanf) }
+\PreprocessorTok{\#include }\ImportTok{\textless{}math.h\textgreater{}}\PreprocessorTok{   }\CommentTok{// Librairie des fonctions mathématiques}
+\PreprocessorTok{\#include }\ImportTok{\textless{}string.h\textgreater{}}\PreprocessorTok{ }\CommentTok{// Librairie de gestion des strings}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+
+\begin{block}{\texttt{\#define}}
+\protect\hypertarget{define}{}
+Les \texttt{\#define} permettent de créer des macros
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\# define LONGUEUR\_RECTANGLE 4}
+\PreprocessorTok{\# define LARGEUR\_RECTANGE 2}
+
+\DataTypeTok{int}\NormalTok{ aire\_du\_rectange }\OperatorTok{=}\NormalTok{ LONGUEUR\_RECTANGLE }\OperatorTok{*}\NormalTok{ LARGEUR\_RECTANGLE}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}{Fonctions}
+\protect\hypertarget{fonctions}{}
+Une fonction en C est un bloc de code composé de quelques instructions
+qui effectue une tâche spécifique.
+
+\includegraphics{img/function-declaration.png}
+\end{frame}
+
+\begin{frame}[fragile]{Fonctions}
+\protect\hypertarget{fonctions-1}{}
+Prenons une fonction \texttt{doubleMe()} qui prend en entrée un entier
+et qui retourne son double.
+
+\begin{block}{Déclaration de la fonction \texttt{doubleMe}}
+\protect\hypertarget{duxe9claration-de-la-fonction-doubleme}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{int}\NormalTok{ doubleMe}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ x}\OperatorTok{)} \OperatorTok{\{}
+    \ControlFlowTok{return}\NormalTok{ x }\OperatorTok{+}\NormalTok{ x}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+
+\begin{block}{Utilisation de \texttt{doubleMe}}
+\protect\hypertarget{utilisation-de-doubleme}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}
+
+\DataTypeTok{int}\NormalTok{ main}\OperatorTok{()} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ x }\OperatorTok{=}\NormalTok{ doubleMe}\OperatorTok{(}\DecValTok{6}\OperatorTok{);}
+\NormalTok{    printf}\OperatorTok{(}\StringTok{"x = \%d"}\OperatorTok{,}\NormalTok{ x}\OperatorTok{);} \CommentTok{// Affiche x = 12}
+    \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tableaux}
+\protect\hypertarget{tableaux}{}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\includegraphics{img/1d-array-filled.png}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+Un tableau est une collection séquencée de taille fixe d'éléments de
+données connexes et nous désignons cette collection d'éléments par un
+nom commun.
+
+\begin{block}{Types de tableaux}
+\protect\hypertarget{types-de-tableaux}{}
+Nous pouvons diviser les tableaux en 3 types.
+
+\begin{itemize}
+\tightlist
+\item
+  Tableau à une dimension
+\item
+  Tableau à deux dimensions
+\item
+  Tableau multidimensionnel
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Tableaux à une dimension}
+\protect\hypertarget{tableaux-uxe0-une-dimension}{}
+Voici la syntaxe d'un tableau unidimensionnel.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{type arrName }\OperatorTok{[}\NormalTok{size}\OperatorTok{]} \OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+Où, \texttt{type} est un type de données quelconque que nous voulons
+utiliser comme \texttt{int}, \texttt{float} etc. Et, \texttt{arrName}
+est le nom de la variable tableau.
+
+Ensuite, nous avons les crochets qui contiennent une valeur entière
+\texttt{size} qui nous indique le nombre total de valeurs que nous
+pouvons stocker dans la variable tableau.
+
+Les valeurs stockées dans un tableau sont appelées éléments du tableau.
+\end{frame}
+
+\begin{frame}[fragile]{Tableaux à une dimension}
+\protect\hypertarget{tableaux-uxe0-une-dimension-1}{}
+Nous souhaitons stocker 20 notes de TP Maths et faire une moyenne
+dessus.
+
+\begin{block}{Initialisons un tableau \texttt{t} de 20 valeurs
+entières.}
+\protect\hypertarget{initialisons-un-tableau-t-de-20-valeurs-entiuxe8res.}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{int}\NormalTok{ t}\OperatorTok{[}\DecValTok{20}\OperatorTok{];}
+\end{Highlighting}
+\end{Shaded}
+
+On va le remplir de valeurs croissantes allant de 0 à 19 :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}} \DecValTok{20}\OperatorTok{;} \OperatorTok{++}\NormalTok{i}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    t}\OperatorTok{[}\NormalTok{i}\OperatorTok{]} \OperatorTok{=}\NormalTok{ i}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tableaux}
+\protect\hypertarget{tableaux-1}{}
+Une fois rempli, on va effectuer une moyenne dessus.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{int}\NormalTok{ somme }\OperatorTok{=} \DecValTok{0}\OperatorTok{;} \CommentTok{// Somme des notes du tableau}
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}} \DecValTok{20}\OperatorTok{;} \OperatorTok{++}\NormalTok{i}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{     somme }\OperatorTok{+=}\NormalTok{ t}\OperatorTok{[}\NormalTok{i}\OperatorTok{];}
+\OperatorTok{\}}
+
+\DataTypeTok{int}\NormalTok{ moyenne }\OperatorTok{=}\NormalTok{ somme }\OperatorTok{/} \DecValTok{20}\OperatorTok{;}   
+\end{Highlighting}
+\end{Shaded}
+\end{frame}
+
+\begin{frame}{Tableaux à deux dimensions.}
+\protect\hypertarget{tableaux-uxe0-deux-dimensions.}{}
+Un tableau à deux dimensions est un tableau dans lequel chaque case
+contient un autre tableau. Graphiquement, on peut représenter cela par
+une grille.
+
+\includegraphics{img/arr.png}
+\end{frame}
+
+\begin{frame}[fragile]{Pointeurs}
+\protect\hypertarget{pointeurs}{}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+En C, un pointeur est une adresse \textbf{pointant} vers un objet. A
+titre de comparaison, on peut associer le pointeur à une adresse postale
+et son objet par un lieu physique. L'adresse
+\texttt{41\ Boulevard\ Vauban\ à\ Lille} pointe vers l'ISEN Lille !
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Adresse & Objet \\
+\midrule
+\endhead
+41 Boulevard Vauban & ISEN \\
+\texttt{0x67826214} & \texttt{int} : 114 \\
+\bottomrule
+\end{longtable}
+
+\begin{block}{Usage}
+\protect\hypertarget{usage}{}
+Les pointeurs sont utiles pour modifier le contenu d'une variable sans
+la cloner ou la perdre.
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight]{img/pointeurs.png}
+\caption{Exemple de pointeurs}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Pointeurs}
+\protect\hypertarget{pointeurs-1}{}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight]{img/lol.jpeg}
+\caption{Pointeurs de pointeurs}
+\end{figure}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.8\textheight]{img/isen4.png}
+\caption{NULL}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Pointeurs}
+\protect\hypertarget{pointeurs-2}{}
+\begin{block}{Exemple}
+\protect\hypertarget{exemple}{}
+Reprenons notre fonction \texttt{doubleMe()}, au lieu de créer une
+nouvelle variable en mémoire qui contient le double de la variable
+passée en argument, on va la modifier directement !
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{void}\NormalTok{ doubleMeEco}\OperatorTok{(}\DataTypeTok{int}\OperatorTok{*}\NormalTok{ a}\OperatorTok{)} \OperatorTok{\{}
+    \OperatorTok{*}\NormalTok{a }\OperatorTok{=} \OperatorTok{*}\NormalTok{a }\OperatorTok{+} \OperatorTok{*}\NormalTok{a}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{int}\NormalTok{ a }\OperatorTok{=}  \DecValTok{3}\OperatorTok{;}
+\NormalTok{doubleMeEco}\OperatorTok{(\&}\NormalTok{a}\OperatorTok{);} \CommentTok{// Et on l\textquotesingle{}appelle avec }
+\end{Highlighting}
+\end{Shaded}
+\end{column}
+\end{columns}
+
+Et pouf ! Plus de copie de variable.
+\end{block}
+
+\begin{block}{Application}
+\protect\hypertarget{application}{}
+Qu'est-ce qu'il se passe si on avait écrit ?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{void}\NormalTok{ doubleMeEco}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ a}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{    a }\OperatorTok{=}\NormalTok{ a }\OperatorTok{+}\NormalTok{ a}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Alors, rien. On copie a dans une variable temporaire et on la perd !
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Pointeurs}
+\protect\hypertarget{pointeurs-3}{}
+\begin{block}{Programme complet}
+\protect\hypertarget{programme-complet}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}
+
+\DataTypeTok{void}\NormalTok{ doubleMeEco}\OperatorTok{(}\DataTypeTok{int}\OperatorTok{*}\NormalTok{ a}\OperatorTok{)} \OperatorTok{\{}
+    \OperatorTok{*}\NormalTok{a }\OperatorTok{=} \OperatorTok{*}\NormalTok{a }\OperatorTok{+} \OperatorTok{*}\NormalTok{a}\OperatorTok{;}
+\OperatorTok{\}}
+
+\DataTypeTok{int}\NormalTok{ main}\OperatorTok{()}
+\OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ a }\OperatorTok{=}  \DecValTok{3}\OperatorTok{;}
+\NormalTok{    doubleMeEco}\OperatorTok{(\&}\NormalTok{a}\OperatorTok{);}
+\NormalTok{    printf}\OperatorTok{(}\StringTok{"a = \%d"}\OperatorTok{,}\NormalTok{ a}\OperatorTok{);}
+
+    \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Structure}
+\protect\hypertarget{structure}{}
+Les structures sont un bloc de données. Elles ne peuvent contenir que
+des variables. On les définit comme ce qui suit :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{struct}\NormalTok{ NomDeLaStructrure }\OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ nombre}\OperatorTok{;}
+    \DataTypeTok{int}\OperatorTok{*}\NormalTok{ pointeur}\OperatorTok{;}
+    \CommentTok{// Vous mettez ce que vous souhaitez dedans}
+\OperatorTok{\};}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{block}{Exemple de structure}
+\protect\hypertarget{exemple-de-structure}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{typedef} \KeywordTok{struct}\NormalTok{ Map}
+\OperatorTok{\{}
+    \DataTypeTok{char}\OperatorTok{*}\NormalTok{ name}\OperatorTok{[}\DecValTok{255}\OperatorTok{];} \CommentTok{// Name of the map}
+    \DataTypeTok{char}\OperatorTok{*}\NormalTok{ author}\OperatorTok{[}\DecValTok{255}\OperatorTok{];} \CommentTok{// Author of the map}
+\NormalTok{    Frame}\OperatorTok{*}\NormalTok{ map}\OperatorTok{[}\DecValTok{255}\OperatorTok{];}
+\OperatorTok{\}}\NormalTok{ Map }\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Structure}
+\protect\hypertarget{structure-1}{}
+\begin{block}{Simplification d'écriture}
+\protect\hypertarget{simplification-duxe9criture}{}
+Pour simplifier la déclaration d'une structure, on peut rajouter un
+typedef devant :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{typedef} \KeywordTok{struct}\NormalTok{ machin }\OperatorTok{\{}
+    \CommentTok{// Données}
+\OperatorTok{\}}\NormalTok{ machin}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+Cela permet d'écrire lorsqu'on souhaite déclarer un objet machin
+d'écrire :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{machin a}\OperatorTok{;} \CommentTok{// Variable a de type machin}
+\CommentTok{// au lieu}
+\KeywordTok{struct}\NormalTok{ machin a }\CommentTok{// Variable a de type Structure machin}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Structure}
+\protect\hypertarget{structure-2}{}
+\begin{block}{Accéder aux données d'une structure}
+\protect\hypertarget{accuxe9der-aux-donnuxe9es-dune-structure}{}
+Pour accéder au données d'une structure, on peut tout simplement faire :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tmp}\OperatorTok{{-}\textgreater{}}\NormalTok{nb\_items }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}{Exercices}
+\protect\hypertarget{exercices}{}
+\begin{block}{1 - Résolution d'une équation du second degré}
+\protect\hypertarget{ruxe9solution-dune-uxe9quation-du-second-degruxe9}{}
+Écrire un programme qui permet d'entrer les coefficients \(a\), \(b\) et
+\(c\) de l'équation : \[ax^2 + bx + c = 0\] et affiche les solutions si
+elles existent.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-1}{}
+\begin{block}{1 - Résolution d'une équation du second degré
+(Correction)}
+\protect\hypertarget{ruxe9solution-dune-uxe9quation-du-second-degruxe9-correction}{}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}
+\PreprocessorTok{\#include }\ImportTok{\textless{}math.h\textgreater{}}
+
+\DataTypeTok{int}\NormalTok{ main }\OperatorTok{(}\DataTypeTok{void}\OperatorTok{)} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ a}\OperatorTok{,}\NormalTok{ b}\OperatorTok{,}\NormalTok{ c}\OperatorTok{;}
+\NormalTok{    printf}\OperatorTok{(}\StringTok{"Entrez trois nombres : "}\OperatorTok{);}
+\NormalTok{    scanf}\OperatorTok{(}\StringTok{"\%d \%d \%d"}\OperatorTok{,} \OperatorTok{\&}\NormalTok{a}\OperatorTok{,} \OperatorTok{\&}\NormalTok{b}\OperatorTok{,} \OperatorTok{\&}\NormalTok{c}\OperatorTok{);}
+    \CommentTok{// Calcul du discriminant delta}
+    \DataTypeTok{int}\NormalTok{ delta }\OperatorTok{=} \OperatorTok{(}\NormalTok{b }\OperatorTok{*}\NormalTok{ b}\OperatorTok{)} \OperatorTok{{-}} \OperatorTok{(}\DecValTok{4} \OperatorTok{*}\NormalTok{ a }\OperatorTok{*}\NormalTok{ c}\OperatorTok{);}
+\end{Highlighting}
+\end{Shaded}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{Shaded}
+\begin{Highlighting}[]
+    \CommentTok{// Si delta est négatif, }
+    \CommentTok{// on affiche "pas de solution"}
+    \ControlFlowTok{if} \OperatorTok{(}\NormalTok{delta }\OperatorTok{\textless{}} \DecValTok{0}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        printf}\OperatorTok{(}\StringTok{"Pas de solution}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\OperatorTok{);}
+        \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+    \OperatorTok{\}}
+
+    \CommentTok{// Si delta est nul, }
+    \CommentTok{// on affiche "une solution"}
+    \ControlFlowTok{else} \ControlFlowTok{if} \OperatorTok{(}\NormalTok{delta }\OperatorTok{==} \DecValTok{0}\OperatorTok{)} \OperatorTok{\{}
+\NormalTok{        printf}\OperatorTok{(}\StringTok{"Une solution : x = \%d}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\OperatorTok{,} 
+            \OperatorTok{({-}}\NormalTok{b }\OperatorTok{/} \OperatorTok{(}\DecValTok{2} \OperatorTok{*}\NormalTok{ a}\OperatorTok{)));}
+        \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+    \OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{column}
+\end{columns}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-2}{}
+\begin{block}{1 - Résolution d'une équation du second degré (Correction
+suite)}
+\protect\hypertarget{ruxe9solution-dune-uxe9quation-du-second-degruxe9-correction-suite}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+    \CommentTok{// Calcul de x1 et x2}
+    \DataTypeTok{float}\NormalTok{ x1 }\OperatorTok{=} \OperatorTok{({-}}\NormalTok{b }\OperatorTok{+}\NormalTok{ sqrt}\OperatorTok{(}\NormalTok{delta}\OperatorTok{))} \OperatorTok{/} \OperatorTok{(}\DecValTok{2} \OperatorTok{*}\NormalTok{ a}\OperatorTok{);}
+    \DataTypeTok{float}\NormalTok{ x2 }\OperatorTok{=} \OperatorTok{({-}}\NormalTok{b }\OperatorTok{{-}}\NormalTok{ sqrt}\OperatorTok{(}\NormalTok{delta}\OperatorTok{))} \OperatorTok{/} \OperatorTok{(}\DecValTok{2} \OperatorTok{*}\NormalTok{ a}\OperatorTok{);}
+    \CommentTok{// Affichage des solutions}
+\NormalTok{    printf}\OperatorTok{(}\StringTok{"x1 = \%2.f}\SpecialCharTok{\textbackslash{}n}\StringTok{x2 = \%2.f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\OperatorTok{,}\NormalTok{ x1}\OperatorTok{,}\NormalTok{ x2}\OperatorTok{);}
+    \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{block}{Sortie}
+\protect\hypertarget{sortie}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{Entrez}\NormalTok{ trois nombres : 4 5 1}
+\ExtensionTok{x1}\NormalTok{ = }\AttributeTok{{-}0}
+\ExtensionTok{x2}\NormalTok{ = }\AttributeTok{{-}1}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-3}{}
+\begin{block}{2 - Fonction récursive}
+\protect\hypertarget{fonction-ruxe9cursive}{}
+Donner le code d'une fonction qui décompte jusqu'à 0 de manière
+récursive à partir d'une valeur initiale \texttt{compteur} passée en
+paramètre.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{void}\NormalTok{ recursCompteurDecrement}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ compteur}\OperatorTok{)\{}
+
+    \ControlFlowTok{return}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-4}{}
+\begin{block}{2 - Fonction récursive (Correction)}
+\protect\hypertarget{fonction-ruxe9cursive-correction}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}
+
+\DataTypeTok{void}\NormalTok{ recursCompteurDecrement}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ compteur}\OperatorTok{)\{}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{compteur }\OperatorTok{\textgreater{}} \DecValTok{0}\OperatorTok{)\{}
+\NormalTok{        printf}\OperatorTok{(}\StringTok{"\%d}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\OperatorTok{,}\NormalTok{ compteur}\OperatorTok{);}
+\NormalTok{        recursCompteurDecrement}\OperatorTok{(}\NormalTok{compteur }\OperatorTok{{-}} \DecValTok{1}\OperatorTok{);}
+    \OperatorTok{\}}
+    \ControlFlowTok{return}\OperatorTok{;}
+\OperatorTok{\}}
+
+\DataTypeTok{int}\NormalTok{ main }\OperatorTok{(}\DataTypeTok{void}\OperatorTok{)} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ compteur }\OperatorTok{=} \DecValTok{10}\OperatorTok{;}
+\NormalTok{    recursCompteurDecrement}\OperatorTok{(}\NormalTok{compteur}\OperatorTok{);}
+    \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}{Exercices}
+\protect\hypertarget{exercices-5}{}
+\begin{block}{3 - Tableau à deux dimensions}
+\protect\hypertarget{tableau-uxe0-deux-dimensions}{}
+\begin{itemize}
+\tightlist
+\item
+  Initialiser un tableau de \(10\) lignes et \(10\) colonnes avec des
+  valeurs entières \(x \in [0,20]\)
+\item
+  Afficher le tableau
+\item
+  Remplir un second tableau de même dimensions avec les valeurs du
+  premier tableau en créant une symétrie par rapport à une diagonale
+\item
+  Afficher le deuxième tableau
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-6}{}
+\begin{block}{3 - Tableau à deux dimensions (\texttt{header.h})}
+\protect\hypertarget{tableau-uxe0-deux-dimensions-header.h}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdlib.h\textgreater{}}
+\PreprocessorTok{\#include }\ImportTok{\textless{}stdio.h\textgreater{}}
+
+\PreprocessorTok{\#define TAILLE 10}
+
+\CommentTok{// Initialisation tableau deux dimensions de taille n*m}
+\DataTypeTok{void}\NormalTok{ init\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{);}
+
+\CommentTok{// Affichage tableau deux dimensions de taille n*m}
+\DataTypeTok{void}\NormalTok{ affiche\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{);}
+
+\CommentTok{// Copie symétrie tableau deux dimensions de taille n*m}
+\DataTypeTok{void}\NormalTok{ sym\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ tab\_deux}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{);}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-7}{}
+\begin{block}{3 - Tableau à deux dimensions (\texttt{header.c})}
+\protect\hypertarget{tableau-uxe0-deux-dimensions-header.c}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\#include }\ImportTok{"header.h"}
+
+\CommentTok{// Initialisation tableau deux dimensions}
+\DataTypeTok{void}\NormalTok{ init\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{)}
+\OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ i}\OperatorTok{,}\NormalTok{ j}\OperatorTok{;}
+    \ControlFlowTok{for} \OperatorTok{(}\NormalTok{i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ n}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)}
+    \OperatorTok{\{}
+        \ControlFlowTok{for} \OperatorTok{(}\NormalTok{j }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ j }\OperatorTok{\textless{}}\NormalTok{ m}\OperatorTok{;}\NormalTok{ j}\OperatorTok{++)}
+        \OperatorTok{\{}
+\NormalTok{            tab}\OperatorTok{[}\NormalTok{i}\OperatorTok{][}\NormalTok{j}\OperatorTok{]} \OperatorTok{=}\NormalTok{ rand}\OperatorTok{()} \OperatorTok{\%} \DecValTok{20}\OperatorTok{;}
+        \OperatorTok{\}}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-8}{}
+\begin{block}{3 - Tableau à deux dimensions (\texttt{header.c})}
+\protect\hypertarget{tableau-uxe0-deux-dimensions-header.c-1}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Affichage d\textquotesingle{}un tableau}
+\DataTypeTok{void}\NormalTok{ affiche\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{)} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ i}\OperatorTok{,}\NormalTok{ j}\OperatorTok{;}
+    \ControlFlowTok{for} \OperatorTok{(}\NormalTok{i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ n}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)}
+    \OperatorTok{\{}
+        \ControlFlowTok{for} \OperatorTok{(}\NormalTok{j }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ j }\OperatorTok{\textless{}}\NormalTok{ m}\OperatorTok{;}\NormalTok{ j}\OperatorTok{++)}
+        \OperatorTok{\{}
+\NormalTok{            printf}\OperatorTok{(}\StringTok{"\%d "}\OperatorTok{,}\NormalTok{ tab}\OperatorTok{[}\NormalTok{i}\OperatorTok{][}\NormalTok{j}\OperatorTok{]);}
+        \OperatorTok{\}}
+\NormalTok{        printf}\OperatorTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-9}{}
+\begin{block}{3 - Tableau à deux dimensions (\texttt{header.c})}
+\protect\hypertarget{tableau-uxe0-deux-dimensions-header.c-2}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Copie symétrie tableau deux dimensions de taille n*m}
+\DataTypeTok{void}\NormalTok{ sym\_tab}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ tab\_deux}\OperatorTok{[][}\NormalTok{TAILLE}\OperatorTok{],} \DataTypeTok{int}\NormalTok{ n}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ m}\OperatorTok{)} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ i}\OperatorTok{,}\NormalTok{ j}\OperatorTok{;}
+    \ControlFlowTok{for} \OperatorTok{(}\NormalTok{i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ n}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)}
+    \OperatorTok{\{}
+        \ControlFlowTok{for} \OperatorTok{(}\NormalTok{j }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ j }\OperatorTok{\textless{}}\NormalTok{ m}\OperatorTok{;}\NormalTok{ j}\OperatorTok{++)}
+        \OperatorTok{\{}
+\NormalTok{            tab\_deux}\OperatorTok{[}\NormalTok{i}\OperatorTok{][}\NormalTok{j}\OperatorTok{]} \OperatorTok{=}\NormalTok{ tab}\OperatorTok{[}\NormalTok{j}\OperatorTok{][}\NormalTok{i}\OperatorTok{];}
+        \OperatorTok{\}}
+    \OperatorTok{\}}
+
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exercices}
+\protect\hypertarget{exercices-10}{}
+\begin{block}{3 - Tableau à deux dimensions (\texttt{main.c})}
+\protect\hypertarget{tableau-uxe0-deux-dimensions-main.c}{}
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{\# include }\ImportTok{"header.h"}
+
+\DataTypeTok{int}\NormalTok{ main }\OperatorTok{(}\DataTypeTok{void}\OperatorTok{)} \OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ tab}\OperatorTok{[}\NormalTok{TAILLE}\OperatorTok{][}\NormalTok{TAILLE}\OperatorTok{];}
+    \DataTypeTok{int}\NormalTok{ tab\_sym}\OperatorTok{[}\NormalTok{TAILLE}\OperatorTok{][}\NormalTok{TAILLE}\OperatorTok{];}
+
+\NormalTok{    init\_tab}\OperatorTok{(}\NormalTok{tab}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{);}
+
+    \CommentTok{// Affichage}
+\NormalTok{    affiche\_tab}\OperatorTok{(}\NormalTok{tab}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{);}
+\NormalTok{    puts}\OperatorTok{(}\StringTok{""}\OperatorTok{);}
+    \CommentTok{// Copie symétrique}
+\NormalTok{    sym\_tab}\OperatorTok{(}\NormalTok{tab}\OperatorTok{,}\NormalTok{ tab\_sym}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{);}
+\NormalTok{    affiche\_tab}\OperatorTok{(}\NormalTok{tab\_sym}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{,}\NormalTok{ TAILLE}\OperatorTok{);}
+    \ControlFlowTok{return} \DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Mini Projet}
+\protect\hypertarget{mini-projet}{}
+\begin{block}{Les listes chainées}
+\protect\hypertarget{les-listes-chainuxe9es}{}
+Une liste chainée permet de ranger plus facilement des données que dans
+un tableau. Chaque Maillon contient une valeur et l'adresse en mémoire
+du maillon suivant.
+
+Dans ce cas, les emplacements des différents éléments peuvent être
+alloués de manière dynamique, au fur et à mesure des besoins. Il n'est
+pas nécessaire de connaître d'avance le nombre d'éléments ou une
+valeur/plafond maximal.
+
+\begin{block}{Questions}
+\protect\hypertarget{questions}{}
+\begin{itemize}
+\tightlist
+\item
+  Créer une structure noeud (contenant une valeur et un pointeur vers le
+  maillon suivant)
+\item
+  Créer une structure liste (contenant l'adresse du premier/dernier
+  élément et sa longueur)
+\item
+  Une fonction de création de noeud dont voici le prototype :
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Node}\OperatorTok{*}\NormalTok{ createNode}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ initialData}\OperatorTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Une fonction de création de liste
+\item
+  Une fonction d'ajout d'un noeud à une liste
+\item
+  Une fonction d'affichage de la liste
+\item
+  Une fonction de suppression d'un maillon/noeud
+\end{itemize}
+\end{block}
+\end{block}
+\end{frame}
+
+\end{document}
